@@ -14,8 +14,8 @@ use Closure;
 use Iterator;
 use Nette;
 use ReflectionClass;
-use SplObjectStorage;
 use Traversable;
+use WeakMap;
 
 
 /**
@@ -287,12 +287,12 @@ class Container extends Nette\Forms\Container
 		// walk groups and clean then from removed components
 		$affected = [];
 		foreach ($this->getForm()->getGroups() as $group) {
-			/** @var SplObjectStorage $groupControls */
+			/** @var WeakMap $groupControls */
 			$groupControls = $controlsProperty->getValue($group);
 
 			foreach ($components as $control) {
-				if ($groupControls->contains($control)) {
-					$groupControls->detach($control);
+				if ($groupControls->offsetExists($control)) {
+					$groupControls->offsetUnset($control);
 
 					if (!in_array($group, $affected, TRUE)) {
 						$affected[] = $group;
