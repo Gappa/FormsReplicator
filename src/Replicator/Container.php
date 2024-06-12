@@ -135,7 +135,12 @@ class Container extends Nette\Forms\Container
 
 	private function getFirstControlName(): ?string
 	{
-		$controls = iterator_to_array($this->getComponents(FALSE, Nette\Forms\IControl::class));
+		$controls = $this->getComponents(FALSE, Nette\Forms\IControl::class);
+
+		if (!is_array($controls)) {
+			$controls = iterator_to_array($controls);
+		}
+
 		$firstControl = reset($controls);
 
 		return $firstControl ? $firstControl->name : NULL;
@@ -172,7 +177,7 @@ class Container extends Nette\Forms\Container
 	public function createOne(?string $name = NULL): Nette\Forms\Container
 	{
 		if ($name === NULL) {
-			$names = array_keys(iterator_to_array($this->getContainers()));
+			$names = array_keys($this->getContainers());
 			$name = $names ? max($names) + 1 : 0;
 		}
 
@@ -364,7 +369,13 @@ class Container extends Nette\Forms\Container
 
 		$filled = $this->countFilledWithout($components, array_unique($exceptChildren));
 
-		return $filled === iterator_count($this->getContainers());
+		$containers = $this->getContainers();
+
+		if (!is_array($containers)) {
+			$containers = iterator_to_array($containers);
+		}
+
+		return $filled === count($containers);
 	}
 
 
