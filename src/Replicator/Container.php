@@ -257,14 +257,16 @@ class Container extends Nette\Forms\Container
 	/**
 	 * @return ?array<string, array<string, mixed>>
 	 */
-	private function getHttpData()
+	private function getHttpData(): ?array
 	{
 		if ($this->httpPost === NULL) {
 			$path = explode(self::NameSeparator, $this->lookupPath(Nette\Forms\Form::class));
 			/** @var array<string, mixed> */ // See https://github.com/nette/forms/pull/333
 			$httpData = $this->getForm()
 				->getHttpData();
-			$this->httpPost = Nette\Utils\Arrays::get($httpData, $path, NULL);
+			/** @var ?array<string, array<string, mixed>> */
+			$httpPost = Nette\Utils\Arrays::get($httpData, $path, NULL);
+			$this->httpPost = $httpPost;
 		}
 
 		return $this->httpPost;
