@@ -459,13 +459,9 @@ class Container extends Nette\Forms\Container
 				$_this->onClick[] = function (Nette\Forms\Controls\SubmitButton $button) use ($allowEmpty, $callback) {
 					/** @var self $replicator */
 					$replicator = $button->lookup(static::class);
-					if (!is_bool($allowEmpty)) {
-						$callback = Closure::fromCallable($allowEmpty);
-						$allowEmpty = FALSE;
-					}
-					if ($allowEmpty === TRUE || $replicator->isAllFilled() === TRUE) {
+					if ($allowEmpty || $replicator->isAllFilled() === TRUE) {
 						$newContainer = $replicator->createOne();
-						if (is_callable($callback)) {
+						if ($callback !== NULL) {
 							$callback($replicator, $newContainer);
 						}
 					}
