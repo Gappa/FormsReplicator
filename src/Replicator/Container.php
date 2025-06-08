@@ -37,7 +37,7 @@ class Container extends Nette\Forms\Container
 	public $createDefault;
 
 	/**
-	 * @var string
+	 * @var class-string<Nette\Forms\Container>
 	 */
 	public $containerClass = Nette\Forms\Container::class;
 
@@ -261,7 +261,10 @@ class Container extends Nette\Forms\Container
 	{
 		if ($this->httpPost === NULL) {
 			$path = explode(self::NameSeparator, $this->lookupPath(Nette\Forms\Form::class));
-			$this->httpPost = Nette\Utils\Arrays::get($this->getForm()->getHttpData(), $path, NULL);
+			/** @var array<string, mixed> */ // See https://github.com/nette/forms/pull/333
+			$httpData = $this->getForm()
+				->getHttpData();
+			$this->httpPost = Nette\Utils\Arrays::get($httpData, $path, NULL);
 		}
 
 		return $this->httpPost;
@@ -341,8 +344,8 @@ class Container extends Nette\Forms\Container
 	/**
 	 * Counts filled values, filtered by given names
 	 *
-	 * @param list<string> $components
-	 * @param list<string> $subComponents
+	 * @param array<string> $components
+	 * @param array<string> $subComponents
 	 */
 	public function countFilledWithout(array $components = [], array $subComponents = []): int
 	{
@@ -355,12 +358,12 @@ class Container extends Nette\Forms\Container
 		$rows = [];
 		$subComponents = array_flip($subComponents);
 		foreach ($httpData as $item) {
-			$filter = function ($value) use (&$filter) {
+			$filter = function ($value) use (&$filter): bool {
 				if (is_array($value)) {
 					return count(array_filter($value, $filter)) > 0;
 				}
 
-				return strlen($value);
+				return strlen($value) > 0;
 			};
 			$rows[] = array_filter(array_diff_key($item, $subComponents), $filter) ?: FALSE;
 		}
@@ -369,7 +372,7 @@ class Container extends Nette\Forms\Container
 	}
 
 	/**
-	 * @param list<string> $exceptChildren
+	 * @param array<string> $exceptChildren
 	 */
 	public function isAllFilled(array $exceptChildren = []): bool
 	{
@@ -379,8 +382,9 @@ class Container extends Nette\Forms\Container
 			fn ($component): bool => $component instanceof Nette\Forms\Control,
 		);
 		foreach ($controls as $control) {
-			/** @var Nette\Forms\Controls\BaseControl $control */
-			$components[] = $control->getName();
+			if (($name = $control->getName()) !== null) {
+				$components[] = $name;
+			}
 		}
 
 		foreach ($this->getContainers() as $container) {
@@ -389,8 +393,9 @@ class Container extends Nette\Forms\Container
 				fn ($component): bool => $component instanceof Nette\Forms\SubmitterControl,
 			);
 			foreach ($buttons as $button) {
-				/** @var Nette\Forms\Controls\SubmitButton $button */
-				$exceptChildren[] = $button->getName();
+				if (($name = $button->getName()) !== null) {
+					$exceptChildren[] = $name;
+				}
 			}
 		}
 
@@ -401,7 +406,7 @@ class Container extends Nette\Forms\Container
 
 	public function addContainer(string|int $name): Nette\Forms\Container
 	{
-		return $this[$name] = new Nette\Forms\Container();
+		return $this[(string) $name] = new Nette\Forms\Container();
 	}
 
 	public function addComponent(Nette\ComponentModel\IComponent $component, ?string $name, ?string $insertBefore = NULL): static
