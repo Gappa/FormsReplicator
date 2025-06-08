@@ -206,7 +206,7 @@ class Container extends Nette\Forms\Container
 	 */
 	public function setValues(array|object $values, bool $erase = FALSE, bool $onlyDisabled = FALSE): static
 	{
-		if (!$this->form->isAnchored() || !$this->form->isSubmitted()) {
+		if (!$this->form?->isAnchored() || !$this->form->isSubmitted()) {
 			foreach ($values as $name => $value) {
 				if ((is_iterable($value)) && !$this->getComponent($name, FALSE)) {
 					$this->createOne($name);
