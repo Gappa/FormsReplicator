@@ -195,7 +195,11 @@ class Container extends Nette\Forms\Container
 			throw new Nette\InvalidArgumentException("Container with name '{$name}' already exists.");
 		}
 
-		return $this[$name];
+		// ComponentModel\ArrayAccess will call createComponent and attach
+		// the returned to the tree, if a component with such name does not exists.
+		/** @var Nette\Forms\Container */
+		$newContainer = $this[$name];
+		return $newContainer;
 	}
 
 	/**
