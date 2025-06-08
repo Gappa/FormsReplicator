@@ -110,19 +110,25 @@ class Container extends Nette\Forms\Container
 	}
 
 	/**
-	 * @return iterable<Nette\Forms\Container>
+	 * @return array<Nette\Forms\Container>
 	 */
-	public function getContainers(bool $recursive = FALSE): iterable
+	public function getContainers(bool $recursive = FALSE): array
 	{
-		return $this->getComponents($recursive, \Nette\Forms\Container::class);
+		return array_filter(
+			$recursive ? $this->getComponentTree() : $this->getComponents(),
+			fn ($component): bool => $component instanceof \Nette\Forms\Container,
+		);
 	}
 
 	/**
-	 * @return iterable<Nette\Forms\ISubmitterControl>
+	 * @return array<Nette\Forms\ISubmitterControl>
 	 */
-	public function getButtons(bool $recursive = FALSE): iterable
+	public function getButtons(bool $recursive = FALSE): array
 	{
-		return $this->getComponents($recursive, Nette\Forms\ISubmitterControl::class);
+		return array_filter(
+			$recursive ? $this->getComponentTree() : $this->getComponents(),
+			fn ($component): bool => $component instanceof Nette\Forms\ISubmitterControl,
+		);
 	}
 
 	/**
@@ -143,7 +149,10 @@ class Container extends Nette\Forms\Container
 
 	private function getFirstControlName(): ?string
 	{
-		$controls = iterator_to_array($this->getComponents(FALSE, Nette\Forms\IControl::class));
+		$controls = array_filter(
+			$this->getComponents(),
+			fn ($component): bool => $component instanceof Nette\Forms\IControl,
+		);
 		$firstControl = reset($controls);
 
 		return $firstControl ? $firstControl->name : NULL;
@@ -267,7 +276,11 @@ class Container extends Nette\Forms\Container
 		}
 
 		// to check if form was submitted by this one
-		foreach ($container->getComponents(TRUE, Nette\Forms\ISubmitterControl::class) as $button) {
+		$buttons = array_filter(
+			$container->getComponentTree(),
+			fn ($component): bool => $component instanceof Nette\Forms\ISubmitterControl,
+		);
+		foreach ($buttons as $button) {
 			/** @var Nette\Forms\Controls\SubmitButton $button */
 			if ($button->isSubmittedBy()) {
 				$this->submittedBy = TRUE;
@@ -276,7 +289,7 @@ class Container extends Nette\Forms\Container
 		}
 
 		/** @var Nette\Forms\Controls\BaseControl[] $components */
-		$components = $container->getComponents(TRUE);
+		$components = $container->getComponentTree();
 		$this->removeComponent($container);
 
 		// reflection is required to hack form groups
@@ -303,7 +316,12 @@ class Container extends Nette\Forms\Container
 
 		// remove affected & empty groups
 		if ($cleanUpGroups && $affected) {
-			foreach ($this->getForm()->getComponents(FALSE, Nette\Forms\Container::class) as $cont) {
+			$containers = array_filter(
+				$this->getForm()
+					->getComponents(),
+				fn ($component): bool => $component instanceof Nette\Forms\Container,
+			);
+			foreach ($containers as $cont) {
 				if ($index = array_search($cont->currentGroup, $affected, TRUE)) {
 					unset($affected[$index]);
 				}
@@ -349,13 +367,21 @@ class Container extends Nette\Forms\Container
 	public function isAllFilled(array $exceptChildren = []): bool
 	{
 		$components = [];
-		foreach ($this->getComponents(FALSE, Nette\Forms\IControl::class) as $control) {
+		$controls = array_filter(
+			$this->getComponents(),
+			fn ($component): bool => $component instanceof Nette\Forms\IControl,
+		);
+		foreach ($controls as $control) {
 			/** @var Nette\Forms\Controls\BaseControl $control */
 			$components[] = $control->getName();
 		}
 
 		foreach ($this->getContainers() as $container) {
-			foreach ($container->getComponents(TRUE, Nette\Forms\ISubmitterControl::class) as $button) {
+			$buttons = array_filter(
+				$container->getComponentTree(),
+				fn ($component): bool => $component instanceof Nette\Forms\ISubmitterControl,
+			);
+			foreach ($buttons as $button) {
 				/** @var Nette\Forms\Controls\SubmitButton $button */
 				$exceptChildren[] = $button->getName();
 			}
