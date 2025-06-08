@@ -405,14 +405,11 @@ class Container extends Nette\Forms\Container
 		return $this;
 	}
 
-	/**
-	 * @var bool
-	 */
-	private static $registered = FALSE;
+	private static ?string $registered = null;
 
 	public static function register(string $methodName = 'addDynamic'): void
 	{
-		if (self::$registered) {
+		if (self::$registered !== null) {
 			Nette\Forms\Container::extensionMethod(self::$registered, function () {
 				throw new Nette\MemberAccessException();
 			});
@@ -428,7 +425,7 @@ class Container extends Nette\Forms\Container
 			}
 		);
 
-		if (self::$registered) {
+		if (self::$registered !== null) {
 			return;
 		}
 
