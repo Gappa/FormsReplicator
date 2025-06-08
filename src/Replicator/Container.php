@@ -234,7 +234,7 @@ class Container extends Nette\Forms\Container
 
 		if (!$this->getForm()->isSubmitted()) {
 			foreach (range(0, $this->createDefault - 1) as $key) {
-				$this->createOne($key);
+				$this->createOne((string) $key);
 			}
 
 		} elseif ($this->forceDefault) {
