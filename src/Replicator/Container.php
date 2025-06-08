@@ -440,13 +440,15 @@ class Container extends Nette\Forms\Container
 				$_this->onClick[] = function (Nette\Forms\Controls\SubmitButton $button) use ($callback) {
 					/** @var self $replicator */
 					$replicator = $button->lookup(static::class);
+					$container = $button->parent;
+					\assert($container instanceof Nette\ComponentModel\Container);
 					if (is_callable($callback)) {
-						$callback($replicator, $button->parent);
+						$callback($replicator, $container);
 					}
 					if ($form = $button->getForm(FALSE)) {
 						$form->onSuccess = [];
 					}
-					$replicator->remove($button->parent);
+					$replicator->remove($container);
 				};
 
 				return $_this;
