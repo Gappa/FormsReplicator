@@ -121,13 +121,13 @@ class Container extends Nette\Forms\Container
 	}
 
 	/**
-	 * @return array<Nette\Forms\ISubmitterControl>
+	 * @return array<Nette\Forms\SubmitterControl>
 	 */
 	public function getButtons(bool $recursive = FALSE): array
 	{
 		return array_filter(
 			$recursive ? $this->getComponentTree() : $this->getComponents(),
-			fn ($component): bool => $component instanceof Nette\Forms\ISubmitterControl,
+			fn ($component): bool => $component instanceof Nette\Forms\SubmitterControl,
 		);
 	}
 
@@ -151,7 +151,7 @@ class Container extends Nette\Forms\Container
 	{
 		$controls = array_filter(
 			$this->getComponents(),
-			fn ($component): bool => $component instanceof Nette\Forms\IControl,
+			fn ($component): bool => $component instanceof Nette\Forms\Control,
 		);
 		$firstControl = reset($controls);
 
@@ -259,7 +259,7 @@ class Container extends Nette\Forms\Container
 	private function getHttpData()
 	{
 		if ($this->httpPost === NULL) {
-			$path = explode(self::NAME_SEPARATOR, $this->lookupPath(Nette\Forms\Form::class));
+			$path = explode(self::NameSeparator, $this->lookupPath(Nette\Forms\Form::class));
 			$this->httpPost = Nette\Utils\Arrays::get($this->getForm()->getHttpData(), $path, NULL);
 		}
 
@@ -278,7 +278,7 @@ class Container extends Nette\Forms\Container
 		// to check if form was submitted by this one
 		$buttons = array_filter(
 			$container->getComponentTree(),
-			fn ($component): bool => $component instanceof Nette\Forms\ISubmitterControl,
+			fn ($component): bool => $component instanceof Nette\Forms\SubmitterControl,
 		);
 		foreach ($buttons as $button) {
 			/** @var Nette\Forms\Controls\SubmitButton $button */
@@ -369,7 +369,7 @@ class Container extends Nette\Forms\Container
 		$components = [];
 		$controls = array_filter(
 			$this->getComponents(),
-			fn ($component): bool => $component instanceof Nette\Forms\IControl,
+			fn ($component): bool => $component instanceof Nette\Forms\Control,
 		);
 		foreach ($controls as $control) {
 			/** @var Nette\Forms\Controls\BaseControl $control */
@@ -379,7 +379,7 @@ class Container extends Nette\Forms\Container
 		foreach ($this->getContainers() as $container) {
 			$buttons = array_filter(
 				$container->getComponentTree(),
-				fn ($component): bool => $component instanceof Nette\Forms\ISubmitterControl,
+				fn ($component): bool => $component instanceof Nette\Forms\SubmitterControl,
 			);
 			foreach ($buttons as $button) {
 				/** @var Nette\Forms\Controls\SubmitButton $button */
