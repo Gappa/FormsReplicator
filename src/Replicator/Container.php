@@ -13,8 +13,8 @@ namespace Kdyby\Replicator;
 use Closure;
 use Nette;
 use ReflectionClass;
-use SplObjectStorage;
 use Traversable;
+use WeakMap;
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
@@ -287,12 +287,12 @@ class Container extends Nette\Forms\Container
 		// walk groups and clean then from removed components
 		$affected = [];
 		foreach ($this->getForm()->getGroups() as $group) {
-			/** @var SplObjectStorage $groupControls */
+			/** @var WeakMap $groupControls */
 			$groupControls = $controlsProperty->getValue($group);
 
 			foreach ($components as $control) {
-				if ($groupControls->contains($control)) {
-					$groupControls->detach($control);
+				if ($groupControls->offsetExists($control)) {
+					unset($groupControls[$control]);
 
 					if (!in_array($group, $affected, TRUE)) {
 						$affected[] = $group;
