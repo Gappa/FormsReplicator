@@ -13,7 +13,6 @@ namespace Kdyby\Replicator;
 use Closure;
 use Nette;
 use ReflectionClass;
-use Traversable;
 use WeakMap;
 
 /**
@@ -53,12 +52,12 @@ class Container extends Nette\Forms\Container
 	private $submittedBy = FALSE;
 
 	/**
-	 * @var array
+	 * @var array<string, Nette\Forms\Container>
 	 */
 	private $created = [];
 
 	/**
-	 * @var array
+	 * @var ?array<string, array<string, mixed>>
 	 */
 	private $httpPost;
 
@@ -203,7 +202,7 @@ class Container extends Nette\Forms\Container
 	}
 
 	/**
-	 * @param array|Traversable $values
+	 * @param iterable<string, iterable<string, mixed>> $values
 	 */
 	public function setValues(array|object $values, bool $erase = FALSE, bool $onlyDisabled = FALSE): static
 	{
@@ -256,7 +255,7 @@ class Container extends Nette\Forms\Container
 	}
 
 	/**
-	 * @return mixed|null
+	 * @return ?array<string, array<string, mixed>>
 	 */
 	private function getHttpData()
 	{
@@ -302,7 +301,7 @@ class Container extends Nette\Forms\Container
 		// walk groups and clean then from removed components
 		$affected = [];
 		foreach ($this->getForm()->getGroups() as $group) {
-			/** @var WeakMap $groupControls */
+			/** @var WeakMap<Nette\Forms\Control, null> $groupControls */
 			$groupControls = $controlsProperty->getValue($group);
 
 			foreach ($components as $control) {
@@ -341,6 +340,9 @@ class Container extends Nette\Forms\Container
 
 	/**
 	 * Counts filled values, filtered by given names
+	 *
+	 * @param list<string> $components
+	 * @param list<string> $subComponents
 	 */
 	public function countFilledWithout(array $components = [], array $subComponents = []): int
 	{
@@ -366,6 +368,9 @@ class Container extends Nette\Forms\Container
 		return count(array_filter($rows));
 	}
 
+	/**
+	 * @param list<string> $exceptChildren
+	 */
 	public function isAllFilled(array $exceptChildren = []): bool
 	{
 		$components = [];
@@ -394,7 +399,7 @@ class Container extends Nette\Forms\Container
 		return $filled === iterator_count($this->getContainers());
 	}
 
-	public function addContainer($name): Nette\Forms\Container
+	public function addContainer(string|int $name): Nette\Forms\Container
 	{
 		return $this[$name] = new Nette\Forms\Container();
 	}
