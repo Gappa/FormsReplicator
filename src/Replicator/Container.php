@@ -121,13 +121,13 @@ class Container extends Nette\Forms\Container
 	}
 
 	/**
-	 * @return array<Nette\Forms\SubmitterControl>
+	 * @return array<Nette\Forms\Controls\SubmitButton>
 	 */
 	public function getButtons(bool $recursive = FALSE): array
 	{
 		return array_filter(
 			$recursive ? $this->getComponentTree() : $this->getComponents(),
-			fn ($component): bool => $component instanceof Nette\Forms\SubmitterControl,
+			fn ($component): bool => $component instanceof Nette\Forms\Controls\SubmitButton,
 		);
 	}
 
@@ -155,7 +155,7 @@ class Container extends Nette\Forms\Container
 		);
 		$firstControl = reset($controls);
 
-		return $firstControl ? $firstControl->name : NULL;
+		return $firstControl ? $firstControl->getName() : NULL;
 	}
 
 	protected function createContainer(): Nette\Forms\Container
@@ -200,8 +200,6 @@ class Container extends Nette\Forms\Container
 
 	/**
 	 * @param array|Traversable $values
-	 *
-	 * @return Nette\Forms\Container|Container
 	 */
 	public function setValues(array|object $values, bool $erase = FALSE, bool $onlyDisabled = FALSE): static
 	{
