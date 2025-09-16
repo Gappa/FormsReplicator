@@ -287,7 +287,7 @@ class Container extends Nette\Forms\Container
 		// reflection is required to hack form groups
 		$groupRefl = new ReflectionClass(Nette\Forms\ControlGroup::class);
 		$controlsProperty = $groupRefl->getProperty('controls');
-		$controlsProperty->setAccessible(TRUE);
+		// $controlsProperty->setAccessible(TRUE);
 
 		// walk groups and clean then from removed components
 		$affected = [];
