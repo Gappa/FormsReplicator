@@ -187,6 +187,7 @@ class Container extends Nette\Forms\Container
 		if ($name === NULL) {
 			$names = array_keys(iterator_to_array($this->getContainers()));
 			$name = $names ? max($names) + 1 : 0;
+			$name = (string) $name;
 		}
 
 		// Container is overriden, therefore every request for getComponent($name, FALSE) would return container
@@ -194,11 +195,7 @@ class Container extends Nette\Forms\Container
 			throw new Nette\InvalidArgumentException("Container with name '{$name}' already exists.");
 		}
 
-		// ComponentModel\ArrayAccess will call createComponent and attach
-		// the returned to the tree, if a component with such name does not exists.
-		/** @var Nette\Forms\Container */
-		$newContainer = $this[$name];
-		return $newContainer;
+		return $this->getComponent($name);
 	}
 
 	/**
