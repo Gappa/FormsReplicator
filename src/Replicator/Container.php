@@ -66,8 +66,8 @@ class Container extends Nette\Forms\Container
 	 */
 	public function __construct(callable $factory, int $createDefault = 0, bool $forceDefault = FALSE)
 	{
-		$this->monitor(Nette\Application\UI\Presenter::class);
-		$this->monitor(Nette\Forms\Form::class);
+		$this->monitor(Nette\Application\UI\Presenter::class, $this->attached(...));
+		$this->monitor(Nette\Forms\Form::class, $this->attached(...));
 
 		try {
 			$this->factoryCallback = Closure::fromCallable($factory);
@@ -143,7 +143,7 @@ class Container extends Nette\Forms\Container
 
 		($this->factoryCallback)($container);
 
-		return $this->created[$container->name] = $container;
+		return $this->created[$container->getName()] = $container;
 	}
 
 	private function getFirstControlName(): ?string
