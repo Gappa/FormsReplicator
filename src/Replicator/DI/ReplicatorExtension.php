@@ -26,7 +26,7 @@ class ReplicatorExtension extends Nette\DI\CompilerExtension
 		$init->addBody(Container::class . '::register();');
 	}
 
-	public static function register(Nette\Configurator $configurator): void
+	public static function register(Nette\Bootstrap\Configurator $configurator): void
 	{
 		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
 			$compiler->addExtension('formsReplicator', new ReplicatorExtension());

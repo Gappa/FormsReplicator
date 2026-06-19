@@ -20,13 +20,15 @@ composer require kdyby/forms-replicator
 
 ## Versions
 
-| State       | Version  | Branch      | PHP      | Nette    |
-|-------------|----------|-------------|----------|----------|
-| stable      | `^3.0.0` | `master`    | `>= 8.2` | `^3.0.0` |
-| stable      | `^2.0.0` |             | `>= 7.1` | `^3.0.0` |
-| stable      | `^1.4.0` | `nette-2.4` | `>= 5.6` | `^2.4.0` |
-| stable      | `^1.3.0` | `nette-2.3` | `>= 5.6` | `^2.3.0` |
-| stable      | `^1.2.0` | `nette-2.2` | `>= 5.6` | `^2.2.0` |
+| State       | Version  | Branch      | PHP      | Nette         |
+|-------------|----------|-------------|----------|---------------|
+| stable      | `^3.0.0` | `master`    | `>= 8.2` | `^3.2.3`      |
+| stable      | `^2.0.0` |             | `>= 7.1` | `^3.0.0`      |
+| stable      | `^1.4.0` | `nette-2.4` | `>= 5.6` | `^2.4.0`      |
+| stable      | `^1.3.0` | `nette-2.3` | `>= 5.6` | `^2.3.0`      |
+| stable      | `^1.2.0` | `nette-2.2` | `>= 5.6` | `^2.2.0`      |
+
+**Note:** Version 3.0 requires `nette/component-model >= 3.1.0`.
 
 ## Overview
 
